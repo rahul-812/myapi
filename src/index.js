@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ──────────────────────────────────────────────────────────────
@@ -13,7 +14,7 @@ app.use('/api', apiRouter);
 // Root route
 app.get('/', (req, res) => {
   res.json({
-    message: '🚀 Express server is running!',
+    message: '🚀 Express server is running (edited v2)!',
     status: 'OK',
     timestamp: new Date().toISOString(),
   });
