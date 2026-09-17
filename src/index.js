@@ -1,7 +1,9 @@
 const express = require('express');
+const pool = require('./db');
+
 const app = express();
-require('dotenv').config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 
 // ── Middleware ──────────────────────────────────────────────────────────────
 app.use(express.json());                        // parse JSON bodies
@@ -20,6 +22,23 @@ app.get('/', (req, res) => {
   });
 });
 
+// Root route
+app.get('/test', async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({
+      message: "Database connection successful",
+      timestamp: result.rows[0].now,
+    });
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({
+      status: "ERROR",
+      message: "Database connection failed",
+    });
+  }
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
@@ -27,13 +46,13 @@ app.use((req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error(err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
 // ── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, "127.0.0.1", () => {
-  console.log(`✅  Server listening on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`✅  Server listening on http://${HOST}:${PORT}/test`);
 });
 
 module.exports = app;
