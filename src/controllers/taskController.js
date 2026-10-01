@@ -15,7 +15,7 @@ async function verifyGoogleToken(idToken) {
         const payload = ticket.getPayload();
         return {
             success: true,
-            providerUserId: payload['sub'],
+            providerId: payload['sub'],
             email: payload['email'],
             name: payload['name'],
             picture: payload['picture']
@@ -41,14 +41,14 @@ async function findOrCreateAccount(req, res) {
         });
     }
 
-    const { providerUserId, email, name, picture } = result;
+    const { providerId, email, name, picture } = result;
     try {
         // Insert into main user's table
         const result = await pool.query("INSERT INTO users (name, email, picture) VALUES ($1, $2, $3) RETURNING id", [name, email, picture]);
         const userId = result.rows[0].id;
 
         // Insert into auth_table
-        await pool.query("INSERT INTO auth_table (user_id, provider, provider_user_id) VALUES($1, $2, $3) RETURNING user_id", [userId, provider, providerUserId]);
+        await pool.query("INSERT INTO auth_table (user_id, provider, provider_id) VALUES($1, $2, $3) RETURNING user_id", [userId, provider, providerId]);
         return res.status(200).json({ id: userId });
     } catch (error) {
         return res.status(500).json({
