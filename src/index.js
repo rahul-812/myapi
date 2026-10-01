@@ -32,7 +32,7 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, HOST, () => {
 	console.log(`✅  Server listening on http://${HOST}:${PORT}`);
 });
 
